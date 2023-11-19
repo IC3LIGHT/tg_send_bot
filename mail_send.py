@@ -1,6 +1,8 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import imaplib
+import time
 import sqlite3
 from base import messages
 
@@ -30,3 +32,9 @@ for email, numb in zip(mail, number):
     text = msg.as_string()
     server.sendmail(fromaddr, email, text)
     server.quit()
+
+    imap_server = imaplib.IMAP4_SSL('imap.mail.ru')
+    imap_server.login(fromaddr, secpass)
+    imap_server.select('Send')  # Выбор папки "Отправленные"
+    imap_server.append('Send', '', imaplib.Time2Internaldate(time.time()), text.encode('UTF-8'))
+    imap_server.logout()
