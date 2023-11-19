@@ -15,8 +15,10 @@ number = [row[1] for row in data]
 conn.close()
 
 fromaddr = "a.bordonos@vk.team"
-# mypass = ""
 secpass = "94Ut0QnFcvTryEBxzbF7"
+"""ТЕСТОВЫЕ ДАННЫЕ"""
+#fromaddr = "1robben@mail.ru"
+#secpass = "zcrGf0zYM2Wjbm8Snpud"
 
 for email, numb in zip(mail, number):
     msg = MIMEMultipart()
