@@ -14,15 +14,15 @@ mail = [row[0] for row in data]
 number = [row[1] for row in data]
 conn.close()
 
-fromaddr = "1robben@mail.ru"
+fromaddr = "a.bordonos@vk.team"
 # mypass = ""
-secpass = "zcrGf0zYM2Wjbm8Snpud"
+secpass = "94Ut0QnFcvTryEBxzbF7"
 
 for email, numb in zip(mail, number):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = email
-    msg['Subject'] = "Тема сообщения"
+    msg['Subject'] = "Дзен"
 
     body = messages[numb]
     msg.attach(MIMEText(body, 'plain'))
