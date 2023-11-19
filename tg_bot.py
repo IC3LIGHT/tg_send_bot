@@ -1,20 +1,14 @@
-import os
 import sqlite3
-import subprocess
 import logging
 import aiogram
 from aiogram import types
 from aiogram import Bot, Dispatcher
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher import filters
-logging.basicConfig(level=logging.INFO)
-import shutil
-import re
-import time
 import subprocess
 
 
 bot = Bot(token='6703848840:AAFXHzN6e7sRG5m7xytiglGaVOsWjeM4mTw')
+logging.basicConfig(level=logging.INFO)
 dp = Dispatcher(bot)
 
 def add_table():
@@ -43,17 +37,32 @@ async def send_info_handler(message: types.Message):
     if len(values) % 2 == 0:
         send_info(*values)
         await message.answer('Почта передана')
+        button = types.InlineKeyboardButton(text='Отправить', callback_data='send')
+        keyboard = types.InlineKeyboardMarkup().add(button)
+        await message.answer('Нажмите кнопку для отправки', reply_markup=keyboard)
     else:
         await message.answer('Перепроверьте значения')
 
-@dp.message_handler(filters.Command(commands=['send']))
-async def run_script_handler(message: types.Message):
 
+@dp.callback_query_handler(text='send')
+async def send_script_handler(callback_query: types.CallbackQuery):
     try:
         subprocess.run(["python", "mail_send.py"])
-        await message.answer('Скрипт успешно запущен')
+        await callback_query.message.answer('Скрипт успешно запущен')
+        button_clear = types.InlineKeyboardButton(text='Очистить таблицу', callback_data='clear')
+        keyboard = types.InlineKeyboardMarkup().add(button_clear)
+        await callback_query.message.answer('Нажмите кнопку для очистки таблицы', reply_markup=keyboard)
     except Exception as e:
-        await message.answer(f'Ошибка при запуске скрипта: {e}')
+        await callback_query.message.answer(f'Ошибка при запуске скрипта: {e}')
+
+
+@dp.callback_query_handler(text='clear')
+async def clear_table_handler(callback_query: types.CallbackQuery):
+    try:
+        clear_table()
+        await callback_query.message.answer('Таблица успешно очищена')
+    except Exception as e:
+        await callback_query.message.answer(f'Ошибка при очистке таблицы: {e}')
 
 def clear_table():
     conn = sqlite3.connect('mail.db')
